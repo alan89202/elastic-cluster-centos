@@ -32,3 +32,4 @@ lsblk -l -o NAME,SIZE,MOUNTPOINT | while read -r dev size mountpoint; do
   echo "$mountpoint $mount_dir xfs defaults,nofail 0 2" | sudo tee -a /etc/fstab
   sudo mount $mount_dir
 done
+sudo reboot
