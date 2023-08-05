@@ -9,10 +9,10 @@ while [[ $unmounted_disks -gt 0 ]]; do
   lsblk -dpno NAME,SIZE,MOUNTPOINT | while read -r dev size mountpoint; do
     if [[ -z "$mountpoint" && "$dev" != "/dev/sda" ]]; then
       if [[ $size == "30G" ]]; then
-        echo "Found unmounted disk $dev, size $size. Mounting to /applogs"
+        echo "Found unmounted disk $dev, size $size. Mounting to /app/logs"
         mount_point="/app/logs"
       else
-        echo "Found unmounted disk $dev, size $size. Mounting to /mnt/data$n"
+        echo "Found unmounted disk $dev, size $size. Mounting to /app/data$n"
         mount_point="/app/data$n"
         n=$((n+1))
       fi
