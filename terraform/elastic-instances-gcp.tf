@@ -53,6 +53,7 @@ resource "google_compute_instance" "master_nodes" {
   attached_disk {
     source = google_compute_disk.master_logs_disks[count.index].self_link
   }
+  metadata_startup_script = file("${path.module}/disk_setup.sh")
 }
 
 # Hot Logs disks creation
@@ -104,6 +105,7 @@ resource "google_compute_instance" "hot_nodes" {
   attached_disk {
     source = google_compute_disk.hot_logs_disks[count.index].self_link
   }
+  metadata_startup_script = file("${path.module}/disk_setup.sh")
 }
 
 # warm Logs disks creation
@@ -155,6 +157,7 @@ resource "google_compute_instance" "warm_node" {
   attached_disk {
     source = google_compute_disk.warm_logs_disks[count.index].self_link
   }
+  metadata_startup_script = file("${path.module}/disk_setup.sh")
 }
 
 # kibana Logs disks creation
@@ -206,4 +209,5 @@ resource "google_compute_instance" "kibana_node" {
   attached_disk {
     source = google_compute_disk.kibana_logs_disks[count.index].self_link
   }
+  metadata_startup_script = file("${path.module}/disk_setup.sh")
 }
