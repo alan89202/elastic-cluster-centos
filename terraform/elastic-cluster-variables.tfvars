@@ -1,0 +1,12 @@
+zone = ["us-west1-a","us-west1-b","us-west1-c"]
+image = "projects/centos-cloud/global/images/centos-7-v20230711"
+master_count = 3
+hot_count = 2
+warm_count = 1
+kibana_count = 1
+master_machine_type = "e2-custom-2-6144"
+hot_machine_type = "e2-custom-6-16384"
+warm_machine_type = "e2-custom-4-8192"
+kibana_machine_type = "e2-custom-2-2048"
+elastic_tags = ["http-server","https-server"]
+kibana_tags = ["kibana","http-server","https-server"]
