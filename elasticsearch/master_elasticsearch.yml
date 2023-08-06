@@ -102,9 +102,8 @@ xpack.security.http.ssl:
 xpack.security.transport.ssl:
   enabled: true
   verification_mode: certificate
-  client_authentication: required
-  keystore.path: certs/elastic-certificates.p12
-  truststore.path: certs/elastic-certificates.p12
+  keystore.path: certs/master-node-N.p12
+  truststore.path: certs/master-node-N.p12
 
 
 # Allow HTTP API connections from anywhere
