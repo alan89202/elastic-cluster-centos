@@ -34,7 +34,7 @@ EOL
 
 # Install Elasticsearch
 echo "Installing Elasticsearch..."
-sudo yum install --enablerepo=elasticsearch elasticsearch
+sudo yum -y install --enablerepo=elasticsearch elasticsearch
 
 # Create Elasticsearch data directory
 echo "Setting up Elasticsearch data directory..."
