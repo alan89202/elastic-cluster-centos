@@ -1,3 +1,4 @@
+project_name = "alvaro-demo-elastic-000001"
 zone = ["us-west1-a","us-west1-b","us-west1-c"]
 image = "projects/centos-cloud/global/images/centos-7-v20230711"
 master_count = 3
