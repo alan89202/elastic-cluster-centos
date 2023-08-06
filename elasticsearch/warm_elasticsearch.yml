@@ -102,8 +102,8 @@ xpack.security.http.ssl:
 xpack.security.transport.ssl:
   enabled: true
   verification_mode: certificate
-  keystore.path: certs/warm-node-N.p12
-  truststore.path: certs/warm-node-N.p12
+  keystore.path: certs/warm-node.p12
+  truststore.path: certs/warm-node.p12
 
 
 # Allow HTTP API connections from anywhere
