@@ -67,3 +67,13 @@ variable "kibana_tags" {
   description = "Tags for kibana machines"
   type        = list(string)
 }
+
+variable "dns_name" {
+  description = "private zone name"
+  type        = string
+}
+
+variable "dns_domain" {
+  description = "private zone domain"
+  type        = string
+}
