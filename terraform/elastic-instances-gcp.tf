@@ -218,6 +218,11 @@ resource "google_dns_managed_zone" "private_zone" {
   dns_name    = var.dns_domain
   description = "Elasticsearch internal private DNS"
   visibility  = "private"
+  private_visibility_config {
+    networks {
+      network_url = var.network_url
+    }
+  }
 }
 
 # Master DNS Records
