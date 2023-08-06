@@ -48,5 +48,6 @@ sudo mkdir -p /app/logs/elasticsearch
 sudo chown elasticsearch:elasticsearch /app/logs/elasticsearch
 sudo chmod 770 /app/logs/elasticsearch/
 
-# Generate ES Cluster certificates
-/usr/share/elasticsearch/bin/elasticsearch-certutil ca
+sudo systemctl daemon-reload
+sudo systemctl enable elasticsearch.service
+
