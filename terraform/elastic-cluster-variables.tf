@@ -77,3 +77,8 @@ variable "dns_domain" {
   description = "private zone domain"
   type        = string
 }
+
+variable "network_name" {
+  description = "network_name"
+  type        = string
+}
