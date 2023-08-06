@@ -212,6 +212,10 @@ resource "google_compute_instance" "kibana_node" {
   metadata_startup_script = file("${path.module}/disk_setup.sh")
 }
 
+data "google_compute_network" "default_network" {
+  name = var.network_name
+}
+
 # Private DNS Zone
 resource "google_dns_managed_zone" "private_zone" {
   name        = var.dns_name
@@ -220,7 +224,7 @@ resource "google_dns_managed_zone" "private_zone" {
   visibility  = "private"
   private_visibility_config {
     networks {
-      network_url = var.network_url
+      network_url = data.google_compute_network.default_network.self_link
     }
   }
 }
