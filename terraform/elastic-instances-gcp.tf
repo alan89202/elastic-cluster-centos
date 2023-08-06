@@ -232,7 +232,7 @@ resource "google_dns_managed_zone" "private_zone" {
 # Master DNS Records
 resource "google_dns_record_set" "master_node_dns" {
   count        = var.master_count
-  name         = name = "master-node-${count.index}.${var.dns_domain}"
+  name         = "master-node-${count.index}.${var.dns_domain}"
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
@@ -242,7 +242,7 @@ resource "google_dns_record_set" "master_node_dns" {
 # hot DNS Records
 resource "google_dns_record_set" "hot_node_dns" {
   count        = var.hot_count
-  name         = name = "hot-node-${count.index}.${var.dns_domain}"
+  name         = "hot-node-${count.index}.${var.dns_domain}"
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
@@ -252,7 +252,7 @@ resource "google_dns_record_set" "hot_node_dns" {
 # Warm DNS Records
 resource "google_dns_record_set" "warm_node_dns" {
   count        = var.warm_count
-  name         = name = "warm-node-${count.index}.${var.dns_domain}"
+  name         = "warm-node-${count.index}.${var.dns_domain}"
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
@@ -262,7 +262,7 @@ resource "google_dns_record_set" "warm_node_dns" {
 # kibana DNS Records
 resource "google_dns_record_set" "kibana_node_dns" {
   count        = var.kibana_count
-  name         = name = "kibana-node-${count.index}.${var.dns_domain}"
+  name         = "kibana-node-${count.index}.${var.dns_domain}"
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
