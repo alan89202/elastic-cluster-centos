@@ -10,3 +10,5 @@ warm_machine_type = "e2-custom-4-8192"
 kibana_machine_type = "e2-custom-2-2048"
 elastic_tags = ["http-server","https-server"]
 kibana_tags = ["kibana","http-server","https-server"]
+dns_name = "elastic-cluster-zone"
+dns_domain = "escluster.internal."
