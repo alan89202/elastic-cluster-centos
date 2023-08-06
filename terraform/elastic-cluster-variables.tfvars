@@ -13,3 +13,4 @@ elastic_tags = ["http-server","https-server"]
 kibana_tags = ["kibana","http-server","https-server"]
 dns_name = "elastic-cluster-zone"
 dns_domain = "escluster.internal."
+network_url = "https://www.googleapis.com/compute/v1/projects/alvaro-demo-elastic-000001/global/networks/default"
