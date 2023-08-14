@@ -21,7 +21,7 @@ sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 
 # Create and update the Elasticsearch repo file
 echo "Updating Elasticsearch repository settings..."
-sudo cat <<EOL > /etc/yum.repos.d/elasticsearch.repo
+sudo bash -c 'cat <<EOL > /etc/yum.repos.d/elasticsearch.repo
 [elasticsearch]
 name=Elasticsearch repository for 8.x packages
 baseurl=https://artifacts.elastic.co/packages/8.x/yum
@@ -30,7 +30,8 @@ gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
 enabled=0
 autorefresh=1
 type=rpm-md
-EOL
+EOL'
+
 
 # Install Elasticsearch
 echo "Installing Elasticsearch..."
