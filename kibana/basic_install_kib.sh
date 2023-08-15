@@ -51,3 +51,37 @@ sudo chmod 770 /app/logs/kibana/
 
 sudo systemctl daemon-reload
 sudo systemctl enable kibana.service
+
+#Configuring kibana.yml
+DOMAIN="escluster.internal"
+FILE="/etc/kibana/kibana.yml"
+sudo cp -p $FILE $FILE"_backup"
+
+#counting hot nodes
+count=0
+myhostname=$(hostname)
+
+for i in {0..100}; do
+  if [[ "hot-node-$i.$DOMAIN" == "$myhostname" ]] || ping -c 1 -W 1 "hot-node-$i.$DOMAIN" &> /dev/null; then
+    count=$((count+1))
+  fi
+done
+
+
+
+#Replace arguments
+sudo sed -i \
+-e '/#*server\.port:/s/#*\([^:]*:\).*$/\1 5601/' \
+-e '/#*server\.host:/s/#*\([^:]*:\).*$/\1 $HOSTNAME/' \
+-e '/#*path\.data:/s/#*\([^:]*:\).*$/\1 \/app\/data1\/kibana/' \
+-e '/appenders:/,/type: json/ { s#fileName: /var/log/kibana/kibana.log#fileName: /app/logs/kibana/kibana.log#g }' \
+$FILE
+
+es_nodes="["
+for i in $(seq 0 $((count-1))); do
+  es_nodes+="\"https://hot-node-$i.$DOMAIN\""
+  [ $i -lt $((count-1)) ] && es_nodes+=", "
+done
+es_nodes+="]"
+
+sudo sed -i 's|^#*elasticsearch\.hosts:.*$|elasticsearch.hosts: '"$es_nodes"'|' $FILE
