@@ -83,6 +83,8 @@ sudo sed -i \
 -e '/#*path\.logs:/s/#*\([^:]*:\).*$/\1 \/app\/logs\/elasticsearch/' \
 -e '/#*network\.host:/s/#*\([^:]*:\).*$/\1 0.0.0.0/' \
 -e "/#*discovery\.seed_hosts:/s/#*\([^:]*:\).*$/\1 $seed_hosts/" \
+-e "/keystore.path:/c\keystore.path: certs/$myhostname.p12"\
+-e "/truststore.path:/c\truststore.path: certs/$myhostname.p12"\\
 $FILE
 
 #Replace only master configs
