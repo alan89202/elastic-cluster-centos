@@ -87,6 +87,7 @@ sudo sed -i \
 -e "s/\(truststore.path:\).*/\1 certs\/$myhostname.p12/" \
 $FILE
 
+
 #Replace only master configs
 
 if [[ "$myhostname" == *"master"* ]]; 
