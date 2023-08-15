@@ -24,6 +24,10 @@ resource "google_compute_disk" "master_disks" {
 
 # VM instances creation - master nodes
 resource "google_compute_instance" "master_nodes" {
+  service_account {
+    email  = "terraform-service-account@alvaro-demo-elastic-000001.iam.gserviceaccount.com"
+    scopes = ["https://www.googleapis.com/auth/devstorage.read_write"]
+  }
   count        = var.master_count
   name         = "master-node-${count.index}"
   machine_type = var.master_machine_type
@@ -76,6 +80,10 @@ resource "google_compute_disk" "hot_disks" {
 
 # VM instances creation - hot nodes
 resource "google_compute_instance" "hot_nodes" {
+  service_account {
+    email  = "terraform-service-account@alvaro-demo-elastic-000001.iam.gserviceaccount.com"
+    scopes = ["https://www.googleapis.com/auth/devstorage.read_write"] 
+  }
   count        = var.hot_count
   name         = "hot-node-${count.index}"
   machine_type = var.hot_machine_type
@@ -128,6 +136,10 @@ resource "google_compute_disk" "warm_disk" {
 
 # VM instances creation - warm nodes
 resource "google_compute_instance" "warm_node" {
+  service_account {
+    email  = "terraform-service-account@alvaro-demo-elastic-000001.iam.gserviceaccount.com"
+    scopes = ["https://www.googleapis.com/auth/devstorage.read_write"]
+  }
   count = var.warm_count
   name = "warm-node"
   machine_type = var.warm_machine_type
@@ -180,6 +192,10 @@ resource "google_compute_disk" "kibana_disk" {
 
 # VM instances creation - kibana nodes
 resource "google_compute_instance" "kibana_node" {
+  service_account {
+    email  = "terraform-service-account@alvaro-demo-elastic-000001.iam.gserviceaccount.com"
+    scopes = ["https://www.googleapis.com/auth/devstorage.read_write"]
+  }
   count = var.kibana_count
   name = "kibana-node"
   machine_type = var.kibana_machine_type
