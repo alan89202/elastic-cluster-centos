@@ -13,6 +13,11 @@ variable "zone" {
   type        = list(string)
 }
 
+variable "region" {
+  description = "Region name"
+  type        = string
+}
+
 variable "image" {
   description = "Image"
   type        = string

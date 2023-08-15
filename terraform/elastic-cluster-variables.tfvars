@@ -1,5 +1,6 @@
 project_name = "alvaro-demo-elastic-000001"
 zone = ["us-west2-a","us-west2-b","us-west2-c"]
+region = "us-west2"
 image = "projects/centos-cloud/global/images/centos-7-v20230711"
 master_count = 3
 hot_count = 2

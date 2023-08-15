@@ -44,7 +44,7 @@ resource "google_compute_instance" "master_nodes" {
       network_tier = "PREMIUM"
     }
 
-    subnetwork = "projects/alvaro-demo-elastic-000001/regions/us-west1/subnetworks/default"
+    subnetwork = "projects/alvaro-demo-elastic-000001/regions/${var.region}/subnetworks/default"
   }
 
   attached_disk {
@@ -96,7 +96,7 @@ resource "google_compute_instance" "hot_nodes" {
       network_tier = "PREMIUM"
     }
 
-    subnetwork = "projects/alvaro-demo-elastic-000001/regions/us-west1/subnetworks/default"
+    subnetwork = "projects/alvaro-demo-elastic-000001/regions/${var.region}/subnetworks/default"
   }
 
   attached_disk {
@@ -148,7 +148,7 @@ resource "google_compute_instance" "warm_node" {
       network_tier = "PREMIUM"
     }
 
-    subnetwork = "projects/alvaro-demo-elastic-000001/regions/us-west1/subnetworks/default"
+    subnetwork = "projects/alvaro-demo-elastic-000001/regions/${var.region}/subnetworks/default"
   }  
 
   attached_disk {
@@ -200,7 +200,7 @@ resource "google_compute_instance" "kibana_node" {
       network_tier = "PREMIUM"
     }
 
-    subnetwork = "projects/alvaro-demo-elastic-000001/regions/us-west1/subnetworks/default"
+    subnetwork = "projects/alvaro-demo-elastic-000001/regions/${var.region}/subnetworks/default"
   }
 
   attached_disk {
