@@ -84,7 +84,7 @@ sudo sed -i \
 -e '/#*network\.host:/s/#*\([^:]*:\).*$/\1 0.0.0.0/' \
 -e "/#*discovery\.seed_hosts:/s/#*\([^:]*:\).*$/\1 $seed_hosts/" \
 -e '/xpack.security.transport.ssl:/,/xpack.security.transport.ssl:/\!b;s/\(^\s*keystore.path:\).*/\1 certs\/'"$myhostname"'.p12/' \
--e -e '/xpack.security.transport.ssl:/,/xpack.security.transport.ssl:/\!b;s/\(^\s*truststore.path:\).*/\1 certs\/'"$myhostname"'.p12/' \
+-e '/xpack.security.transport.ssl:/,/xpack.security.transport.ssl:/\!b;s/\(^\s*truststore.path:\).*/\1 certs\/'"$myhostname"'.p12/' \
 $FILE
 
 
