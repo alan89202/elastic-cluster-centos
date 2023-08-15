@@ -52,3 +52,22 @@ sudo chmod 770 /app/logs/elasticsearch/
 sudo systemctl daemon-reload
 sudo systemctl enable elasticsearch.service
 
+#Configuring elasticsearch.yml
+
+FILE="/etc/elasticsearch/elasticsearch.yml"
+
+sudo cp -p $FILE "$FILE_backup"
+
+#Replace arguments
+sudo sed -i \
+-e '/#*cluster\.name:/s/#*\([^:]*:\).*$/\1 cluster-demo/' \
+-e '/#*node\.name:/s/#*\([^:]*:\).*$/\1 $HOSTNAME/' \
+-e '/#*path\.data:/s/#*\([^:]*:\).*$/\1 \/app\/data1\/elasticsearch/' \
+-e '/#*path\.logs:/s/#*\([^:]*:\).*$/\1 \/app\/logs\/elasticsearch/' \
+# Añade más reemplazos en nuevas líneas si es necesario
+$FILE
+
+
+
+
+
