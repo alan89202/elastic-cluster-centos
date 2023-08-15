@@ -35,7 +35,7 @@ EOL'
 
 # Install kibana
 echo "Installing Kibana..."
-sudo yum -y install --enablerepo=kibana kibana
+sudo yum -y install kibana
 
 # Create kibana data directory
 echo "Setting up kibana data directory..."
