@@ -1,0 +1,5 @@
+# Ignorar carpeta de inicialización de Terraform
+.terraform/
+terraform.tfstate.d/
+*.tfstate
+*.tfstate.backup
