@@ -53,10 +53,27 @@ sudo systemctl daemon-reload
 sudo systemctl enable elasticsearch.service
 
 #Configuring elasticsearch.yml
-
+DOMAIN="escluster.internal"
 FILE="/etc/elasticsearch/elasticsearch.yml"
+sudo cp -p $FILE $FILE"_backup"
 
-sudo cp -p $FILE "$FILE_backup"
+#counting master nodes
+count=0
+myhostname=$(hostname)
+
+for i in {0..100}; do
+  if [[ "master-node-$i.$DOMAIN" == "$myhostname" ]] || ping -c 1 -W 1 "master-node-$i.$DOMAIN" &> /dev/null; then
+    count=$((count+1))
+  fi
+done
+
+#Create seed hosts
+seed_hosts="["
+for i in $(seq 0 $((count-1))); do
+  seed_hosts+="\"master-node-$i.$DOMAIN\""
+  [ $i -lt $((count-1)) ] && seed_hosts+=", "
+done
+seed_hosts+="]"
 
 #Replace arguments
 sudo sed -i \
@@ -64,8 +81,40 @@ sudo sed -i \
 -e '/#*node\.name:/s/#*\([^:]*:\).*$/\1 $HOSTNAME/' \
 -e '/#*path\.data:/s/#*\([^:]*:\).*$/\1 \/app\/data1\/elasticsearch/' \
 -e '/#*path\.logs:/s/#*\([^:]*:\).*$/\1 \/app\/logs\/elasticsearch/' \
-# Añade más reemplazos en nuevas líneas si es necesario
+-e '/#*network\.host:/s/#*\([^:]*:\).*$/\1 0.0.0.0/' \
+-e "/#*discovery\.seed_hosts:/s/#*\([^:]*:\).*$/\1 $seed_hosts/" \
 $FILE
+
+#Replace only master configs
+
+if [[ "$myhostname" == *"master"* ]]; 
+  then
+    initial_master_nodes="["
+    for i in $(seq 0 $((count-1))); do
+      initial_master_nodes+="\"master-node-$i\""
+      [ $i -lt $((count-1)) ] && initial_master_nodes+=", "
+    done
+    initial_master_nodes+="]"
+    
+    sudo sed -i "0,/cluster\.initial_master_nodes:/s/.*cluster\.initial_master_nodes:.*/cluster.initial_master_nodes: $initial_master_nodes/" $FILE
+    sudo sed -i "1,/cluster\.initial_master_nodes:/!s/^cluster\.initial_master_nodes/#&/" $FILE
+    echo -e "\n#Node Role\nnode.roles: [ master ]" | sudo tee -a $FILE > /dev/null
+
+#Replace only hot configs
+
+elif [[ "$myhostname" == *"hot"* ]];
+  then
+    sudo sed -i "1,/cluster\.initial_master_nodes:/!s/^cluster\.initial_master_nodes/#&/" $FILE  
+    echo -e "\n#Node Role\nnode.roles: [ \"data_content\", \"data_hot\", \"ingest\" ]" | sudo tee -a $FILE > /dev/null
+
+#Replace only warm configs
+
+elif [[ "$myhostname" == *"warm"* ]];
+  then
+    sudo sed -i "1,/cluster\.initial_master_nodes:/!s/^cluster\.initial_master_nodes/#&/" $FILE
+    echo -e "\n#Node Role\nnode.roles: [ \"data_warm\" ]" | sudo tee -a $FILE > /dev/null
+fi
+
 
 
 
