@@ -13,7 +13,7 @@ variable "es_ca_pass" {
   type        = string
 }
 
-variable "es_instances_cert_pass" {
+variable "instances_cert_pass" {
   description = "Password of certificates for each instance"
   type        = string
 }
