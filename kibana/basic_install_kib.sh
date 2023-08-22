@@ -56,7 +56,7 @@ sudo systemctl enable kibana.service
 DOMAIN="escluster.internal"
 FILE="/etc/kibana/kibana.yml"
 sudo cp -p $FILE $FILE"_backup"
-
+sudo mkdir /etc/kibana/config
 #counting hot nodes
 count=0
 myhostname=$(hostname)
@@ -72,10 +72,11 @@ done
 #Replace arguments
 sudo sed -i \
 -e '/#*server\.port:/s/#*\([^:]*:\).*$/\1 5601/' \
--e '/#*server\.host:/s/#*\([^:]*:\).*$/\1 $HOSTNAME/' \
+-e '/#*server\.host:/s/#*\([^:]*:\).*$/\1 '"$myhostname"'/' \
 -e '/#*path\.data:/s/#*\([^:]*:\).*$/\1 \/app\/data1\/kibana/' \
 -e '/appenders:/,/type: json/ { s#fileName: /var/log/kibana/kibana.log#fileName: /app/logs/kibana/kibana.log#g }' \
 $FILE
+echo -e "\n# This configures Kibana to trust a specific Certificate Authority for connections to Elasticsearch\nelasticsearch.ssl.certificateAuthorities: [ \"config/elasticsearch-ca.pem\" ]" | sudo tee -a $FILE > /dev/null
 
 es_nodes="["
 for i in $(seq 0 $((count-1))); do
@@ -85,3 +86,23 @@ done
 es_nodes+="]"
 
 sudo sed -i 's|^#*elasticsearch\.hosts:.*$|elasticsearch.hosts: '"$es_nodes"'|' $FILE
+
+#Create script to finish HTTP certificate configurations
+sudo cat > /tmp/http_cert_config.sh <<EOL
+#!/bin/bash
+
+# Ensure the script stops on the first error
+set -e
+
+#Copy Certificates to Each Node
+sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
+sudo unzip /tmp/instances_http.zip -d /tmp/
+sudo cp -f /tmp/kibana/elasticsearch-ca.pem /etc/kibana/config/
+
+#change files permissions
+sudo chown -Rf root:kibana /etc/kibana/*
+sudo chmod -Rf 770 /etc/kibana/*
+EOL
+
+sudo chmod -Rf 770 /tmp/http_cert_config.sh
+
