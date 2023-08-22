@@ -172,7 +172,7 @@ EOL
   #change the password of the elasticsearch keystore
   #echo $ES_KEYSTORE_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore passwd -xf
   echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -xf
-  echo $INSTANCES_CERT_PASS | sudo/usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
+  echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
 
   #Create the signal file
   CURRENT_DATETIME=$(date +"%Y%m%d%H%M")
@@ -209,7 +209,7 @@ else
   #change the password of the elasticsearch keystore
   #echo $ES_KEYSTORE_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore passwd -xf
   echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -xf
-  echo $INSTANCES_CERT_PASS | sudo/usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
+  echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
 
 fi
 
