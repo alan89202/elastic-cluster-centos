@@ -3,6 +3,21 @@ variable "credentials" {
   type        = string
 }
 
+variable "es_keystore_pass" {
+  description = "elasticsearch keystore password"
+  type        = string
+}
+
+variable "es_ca_pass" {
+  description = "Password of elasticsearch certificate authority"
+  type        = string
+}
+
+variable "es_instances_cert_pass" {
+  description = "Password of certificates for each instance"
+  type        = string
+}
+
 variable "project_name" {
   description = "Project name"
   type        = string
