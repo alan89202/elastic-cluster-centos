@@ -156,11 +156,9 @@ EOL
 
   #create certificates for each instance
   sudo /usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in /usr/share/elasticsearch/instances.yml --out instances.zip --ca /usr/share/elasticsearch/cluster-demo-ca.p12 --pass $INSTANCES_CERT_PASS --ca-pass $ES_CA_PASS
-  #create http certificates for each instance
-  sudo /usr/share/elasticsearch/bin/elasticsearch-certutil http --silent --in /usr/share/elasticsearch/instances.yml --out instances_http.zip --ca /usr/share/elasticsearch/cluster-demo-ca.p12 --pass $INSTANCES_CERT_PASS --ca-pass $ES_CA_PASS
   #Upload Certificates to Cloud Storage
   sudo gsutil cp /usr/share/elasticsearch/cluster-demo-ca.p12 gs://elk_config_files/
-  sudo gsutil cp /usr/share/elasticsearch/instances*.zip gs://elk_config_files/
+  sudo gsutil cp /usr/share/elasticsearch/instances.zip gs://elk_config_files/
   
   #Copy Certificates to Each Node
   sudo gsutil cp gs://elk_config_files/instances.zip /tmp
@@ -171,10 +169,6 @@ EOL
   sudo cp /tmp/cluster-demo-ca.p12 /etc/elasticsearch/certs/
   #sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem  
 
-  #Copy http certificates to each node
-  sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
-  sudo unzip /tmp/instances_http.zip -d /tmp/
-  
   #change files permissions
   sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
   sudo chmod -Rf 770 /etc/elasticsearch/*
@@ -189,6 +183,28 @@ EOL
   sudo echo "done" > /tmp/done_$CURRENT_DATETIME.txt
   sudo gsutil cp /tmp/done_$CURRENT_DATETIME.txt gs://elk_config_files/
   echo "Elasticsearch Installed"
+
+  #Create script to finish HTTP certificate configurations
+  sudo cat > /tmp/http_cert_config.sh <<EOL
+#!/bin/bash
+
+# Ensure the script stops on the first error
+set -e
+#Upload Certificates to Cloud Storage
+sudo gsutil cp /usr/share/elasticsearch/instances_http.zip gs://elk_config_files/
+
+#Copy Certificates to Each Node
+sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
+sudo unzip /tmp/instances_http.zip -d /tmp/
+sudo cp -f /tmp/elasticsearch/http.p12 /etc/elasticsearch/certs/
+
+#change files permissions
+sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
+sudo chmod -Rf 770 /etc/elasticsearch/*
+EOL
+
+ sudo chmod -Rf 770 /tmp/http_cert_config.sh
+  
 else
   #Wait until node-0 finish
   BOOT_TIME=$(date -d "$(uptime -s)" +"%Y%m%d%H%M")
@@ -226,7 +242,26 @@ else
   echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -xf
   echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
   echo "Elasticsearch Installed"
+
+  #Create script to finish HTTP certificate configurations
+  sudo cat > /tmp/http_cert_config.sh <<EOL
+#!/bin/bash
+
+# Ensure the script stops on the first error
+set -e
+#Copy Certificates to Each Node
+sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
+sudo unzip /tmp/instances_http.zip -d /tmp/
+sudo cp -f /tmp/elasticsearch/http.p12 /etc/elasticsearch/certs/
+
+#change files permissions
+sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
+sudo chmod -Rf 770 /etc/elasticsearch/*
+EOL
+
+ sudo chmod -Rf 770 /tmp/http_cert_config.sh
 fi
+
 
 
 
