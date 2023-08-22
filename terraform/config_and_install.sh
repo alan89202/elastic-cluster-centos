@@ -19,6 +19,6 @@ else
   # If 'kibana' is not in the hostname, copy and execute basic_install_es.sh
   gsutil cp gs://elk_config_files/basic_install_es.sh /tmp/
   chmod +x /tmp/basic_install_es.sh
-  /tmp/basic_install_es.sh
+  /tmp/basic_install_es.sh ${var.es_keystore_pass} ${var.es_ca_pass} ${var.instances_cert_pass}
 fi
 
