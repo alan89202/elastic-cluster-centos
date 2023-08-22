@@ -84,7 +84,7 @@ seed_hosts+="]"
 #Replace arguments
 sudo sed -i \
 -e '/#*cluster\.name:/s/#*\([^:]*:\).*$/\1 cluster-demo/' \
--e '/#*node\.name:/s/#*\([^:]*:\).*$/\1 $HOSTNAME/' \
+-e '/#*node\.name:/s/#*\([^:]*:\).*$/\1 '"$myhostname"'/' \
 -e '/#*path\.data:/s/#*\([^:]*:\).*$/\1 \/app\/data1\/elasticsearch/' \
 -e '/#*path\.logs:/s/#*\([^:]*:\).*$/\1 \/app\/logs\/elasticsearch/' \
 -e '/#*network\.host:/s/#*\([^:]*:\).*$/\1 0.0.0.0/' \
