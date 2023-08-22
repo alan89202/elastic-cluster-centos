@@ -18,8 +18,8 @@ echo "Installing Java 11 OpenJDK Development Kit..."
 sudo yum -y install java-11-openjdk-devel
 
 # Install other required packages
-echo "Installing nano, lsof, nmon, and unzip..."
-sudo yum -y install nano lsof nmon unzip
+echo "Installing nano, lsof, nmon, unzip and openssl..."
+sudo yum -y install nano lsof nmon unzip openssl
 
 # Import GPG key for Elasticsearch
 echo "Importing GPG key for Elasticsearch..."
@@ -127,7 +127,7 @@ fi
 if [[ "$myhostname" == *"master-node-0"* ]]; 
   then
     # create elasticsearch CA
-    sudo /usr/share/elasticsearch/bin/elasticsearch-certutil ca -s --pass $ES_CA_PASS --out elastic-stack-ca.p12
+    sudo /usr/share/elasticsearch/bin/elasticsearch-certutil ca -s --pass $ES_CA_PASS --out cluster-demo-ca.p12
     # create instances file
     sudo cat > /usr/share/elasticsearch/instances.yml <<EOL
 instances:
@@ -155,9 +155,10 @@ instances:
 EOL
 
   #create certificates for each instance
-  sudo /usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in /usr/share/elasticsearch/instances.yml --out instances.zip --ca /usr/share/elasticsearch/elastic-stack-ca.p12 --pass $INSTANCES_CERT_PASS --ca-pass $ES_CA_PASS
+  sudo /usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in /usr/share/elasticsearch/instances.yml --out instances.zip --ca /usr/share/elasticsearch/cluster-demo-ca.p12 --pass $INSTANCES_CERT_PASS --ca-pass $ES_CA_PASS
   
   #Upload Certificates to Cloud Storage
+  sudo gsutil cp /usr/share/elasticsearch/cluster-demo-ca.p12 gs://elk_config_files/
   sudo gsutil cp /usr/share/elasticsearch/instances.zip gs://elk_config_files/
   
   #Copy Certificates to Each Node
@@ -165,6 +166,10 @@ EOL
   sudo unzip /tmp/instances.zip -d /tmp/
   sudo cp /tmp/$HOSTNAME/$HOSTNAME.p12 /etc/elasticsearch/certs/
   
+  sudo gsutil cp gs://elk_config_files/cluster-demo-ca.p12 /tmp
+  sudo cp /tmp/cluster-demo-ca.p12 /etc/elasticsearch/certs/
+  sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem  
+ 
   #change files permissions
   sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
   sudo chmod -Rf 770 /etc/elasticsearch/*
@@ -178,6 +183,7 @@ EOL
   CURRENT_DATETIME=$(date +"%Y%m%d%H%M")
   sudo echo "done" > /tmp/done_$CURRENT_DATETIME.txt
   sudo gsutil cp /tmp/done_$CURRENT_DATETIME.txt gs://elk_config_files/
+  echo "Elasticsearch Installed"
 else
   #Wait until node-0 finish
   BOOT_TIME=$(date -d "$(uptime -s)" +"%Y%m%d%H%M")
@@ -202,6 +208,10 @@ else
   sudo unzip /tmp/instances.zip -d /tmp/
   sudo cp /tmp/$HOSTNAME/$HOSTNAME.p12 /etc/elasticsearch/certs/
   
+  sudo gsutil cp gs://elk_config_files/cluster-demo-ca.p12 /tmp
+  sudo cp /tmp/cluster-demo-ca.p12 /etc/elasticsearch/certs/
+  sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem
+  
   #change files permissions
   sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
   sudo chmod -Rf 770 /etc/elasticsearch/*
@@ -210,7 +220,7 @@ else
   #echo $ES_KEYSTORE_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore passwd -xf
   echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -xf
   echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
-
+  echo "Elasticsearch Installed"
 fi
 
 
