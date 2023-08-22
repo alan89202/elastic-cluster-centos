@@ -7,7 +7,7 @@ This guide will walk you through the process of generating certificates and conf
 First, you'll need to create a certificate authority (CA) on the primary node.
 
 ```bash
-/usr/share/elasticsearch/bin/elasticsearch-certutil ca
+/usr/share/elasticsearch/bin/elasticsearch-certutil ca -s --pass "" --out elastic-stack-ca.p12
 ```
 
 ## 2. Create the `instances.yml` File
@@ -48,7 +48,7 @@ instances:
 
 Use the instances.yml file you've just created to generate the necessary certificates.
 ```bash
-/usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in /usr/share/elasticsearch/instances.yml --out instances.zip --ca /usr/share/elasticsearch/elastic-stack-ca.p12
+/usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in /usr/share/elasticsearch/instances.yml --out instances.zip --ca /usr/share/elasticsearch/elastic-stack-ca.p12 --pass "" --ca-pass ""
 ```
 
 ## 4. Upload Certificates to Cloud Storage
