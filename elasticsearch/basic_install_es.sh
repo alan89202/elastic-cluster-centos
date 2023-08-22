@@ -176,7 +176,8 @@ EOL
 
   #Create the signal file
   CURRENT_DATETIME=$(date +"%Y%m%d%H%M")
-  echo "done" | sudo gsutil cp - gs://elk_config_files/done_$CURRENT_DATETIME.txt
+  sudo echo "done" > /tmp/done_$CURRENT_DATETIME.txt
+  sudo gsutil cp /tmp/done_$CURRENT_DATETIME.txt gs://elk_config_files/
 else
   #Wait until node-0 finish
   BOOT_TIME=$(date -d "$(uptime -s)" +"%Y%m%d%H%M")
