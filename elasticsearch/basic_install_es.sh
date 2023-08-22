@@ -168,7 +168,7 @@ EOL
   
   sudo gsutil cp gs://elk_config_files/cluster-demo-ca.p12 /tmp
   sudo cp /tmp/cluster-demo-ca.p12 /etc/elasticsearch/certs/
-  sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem  
+  #sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem  
  
   #change files permissions
   sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
@@ -210,7 +210,7 @@ else
   
   sudo gsutil cp gs://elk_config_files/cluster-demo-ca.p12 /tmp
   sudo cp /tmp/cluster-demo-ca.p12 /etc/elasticsearch/certs/
-  sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem
+  #sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem
   
   #change files permissions
   sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
