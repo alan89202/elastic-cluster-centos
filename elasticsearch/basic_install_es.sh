@@ -156,10 +156,11 @@ EOL
 
   #create certificates for each instance
   sudo /usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in /usr/share/elasticsearch/instances.yml --out instances.zip --ca /usr/share/elasticsearch/cluster-demo-ca.p12 --pass $INSTANCES_CERT_PASS --ca-pass $ES_CA_PASS
-  
+  #create http certificates for each instance
+  sudo /usr/share/elasticsearch/bin/elasticsearch-certutil http --silent --in /usr/share/elasticsearch/instances.yml --out instances_http.zip --ca /usr/share/elasticsearch/cluster-demo-ca.p12 --pass $INSTANCES_CERT_PASS --ca-pass $ES_CA_PASS
   #Upload Certificates to Cloud Storage
   sudo gsutil cp /usr/share/elasticsearch/cluster-demo-ca.p12 gs://elk_config_files/
-  sudo gsutil cp /usr/share/elasticsearch/instances.zip gs://elk_config_files/
+  sudo gsutil cp /usr/share/elasticsearch/instances*.zip gs://elk_config_files/
   
   #Copy Certificates to Each Node
   sudo gsutil cp gs://elk_config_files/instances.zip /tmp
@@ -169,7 +170,11 @@ EOL
   sudo gsutil cp gs://elk_config_files/cluster-demo-ca.p12 /tmp
   sudo cp /tmp/cluster-demo-ca.p12 /etc/elasticsearch/certs/
   #sudo openssl pkcs12 -in /etc/elasticsearch/certs/cluster-demo-ca.p12 -clcerts -nokeys -out /etc/elasticsearch/certs/cluster-demo-ca.pem  
- 
+
+  #Copy http certificates to each node
+  sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
+  sudo unzip /tmp/instances_http.zip -d /tmp/
+  
   #change files permissions
   sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
   sudo chmod -Rf 770 /etc/elasticsearch/*
