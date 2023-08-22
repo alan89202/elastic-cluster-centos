@@ -3,6 +3,12 @@
 # Ensure the script stops on the first error
 set -e
 
+#Define ES variables
+ES_KEYSTORE_PASS=$1
+ES_CA_PASS=$2
+INSTANCES_CERT_PASS=$3
+
+
 # Update the system
 echo "Updating the system..."
 sudo yum -y update
@@ -117,7 +123,94 @@ elif [[ "$myhostname" == *"warm"* ]];
     sudo sed -i "1,/cluster\.initial_master_nodes:/!s/^cluster\.initial_master_nodes/#&/" $FILE
     echo -e "\n#Node Role\nnode.roles: [ \"data_warm\" ]" | sudo tee -a $FILE > /dev/null
 fi
+#Configure certificates
+if [[ "$myhostname" == *"master-node-0"* ]]; 
+  then
+    # create elasticsearch CA
+    sudo /usr/share/elasticsearch/bin/elasticsearch-certutil ca -s --pass $ES_CA_PASS --out elastic-stack-ca.p12
+    # create instances file
+    sudo cat > /usr/share/elasticsearch/instances.yml <<EOL
+instances:
+  - name: "master-node-0" 
+    dns: 
+      - "master-node-0.escluster.internal"
+  - name: "master-node-1" 
+    dns: 
+      - "master-node-1.escluster.internal"
+  - name: "master-node-2" 
+    dns: 
+      - "master-node-2.escluster.internal"
+  - name: "hot-node-0" 
+    dns: 
+      - "hot-node-0.escluster.internal"
+  - name: "hot-node-1" 
+    dns: 
+      - "hot-node-1.escluster.internal"
+  - name: "warm-node" 
+    dns: 
+      - "warm-node.escluster.internal"
+  - name: "kibana-node" 
+    dns: 
+      - "kibana-node.escluster.internal"
+EOL
 
+  #create certificates for each instance
+  sudo /usr/share/elasticsearch/bin/elasticsearch-certutil cert --silent --in /usr/share/elasticsearch/instances.yml --out instances.zip --ca /usr/share/elasticsearch/elastic-stack-ca.p12 --pass $INSTANCES_CERT_PASS --ca-pass $ES_CA_PASS
+  
+  #Upload Certificates to Cloud Storage
+  sudo gsutil cp /usr/share/elasticsearch/instances.zip gs://elk_config_files/
+  
+  #Copy Certificates to Each Node
+  sudo gsutil cp gs://elk_config_files/instances.zip /tmp
+  sudo unzip /tmp/instances.zip -d /tmp/
+  sudo cp /tmp/$HOSTNAME/$HOSTNAME.p12 /etc/elasticsearch/certs/
+  
+  #change files permissions
+  sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
+  sudo chmod -Rf 770 /etc/elasticsearch/*
+
+  #change the password of the elasticsearch keystore
+  #echo $ES_KEYSTORE_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore passwd -xf
+  echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -xf
+  echo $INSTANCES_CERT_PASS | sudo/usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
+
+  #Create the signal file
+  CURRENT_DATETIME=$(date +"%Y%m%d%H%M")
+  echo "done" | sudo gsutil cp - gs://elk_config_files/done_$CURRENT_DATETIME.txt
+else
+  #Wait until node-0 finish
+  BOOT_TIME=$(date -d "$(uptime -s)" +"%Y%m%d%H%M")
+  while true; do
+    LATEST_DONE_FILE=$(sudo gsutil ls gs://elk_config_files/done_*.txt | sort | tail -n 1)
+    if [[ -z "$LATEST_DONE_FILE" ]]; then
+        echo "Waiting until master-node-0 finish..."
+        sleep 30
+        continue
+    fi
+    LATEST_DONE_DATETIME=$(echo $LATEST_DONE_FILE | grep -oP '(?<=done_)\d+')
+    # Compare dates between file and uptime command
+    if [[ "$LATEST_DONE_DATETIME" -gt "$BOOT_TIME" ]]; then
+        break
+    else
+        echo "Signal is from older execution. Waiting ..."
+        sleep 30
+    fi
+  done
+  #Copy Certificates to Each Node
+  sudo gsutil cp gs://elk_config_files/instances.zip /tmp
+  sudo unzip /tmp/instances.zip -d /tmp/
+  sudo cp /tmp/$HOSTNAME/$HOSTNAME.p12 /etc/elasticsearch/certs/
+  
+  #change files permissions
+  sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
+  sudo chmod -Rf 770 /etc/elasticsearch/*
+
+  #change the password of the elasticsearch keystore
+  #echo $ES_KEYSTORE_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore passwd -xf
+  echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -xf
+  echo $INSTANCES_CERT_PASS | sudo/usr/share/elasticsearch/bin/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -xf
+
+fi
 
 
 
