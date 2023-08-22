@@ -196,8 +196,8 @@ sudo gsutil cp /usr/share/elasticsearch/instances_http.zip gs://elk_config_files
 
 #Copy Certificates to Each Node
 sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
-sudo unzip /tmp/instances_http.zip -d /tmp/
-sudo cp -f /tmp/elasticsearch/http.p12 /etc/elasticsearch/certs/
+sudo unzip -o /tmp/instances_http.zip -d /tmp/
+sudo cp -f /tmp/elasticsearch/$HOSTNAME/http.p12 /etc/elasticsearch/certs/
 
 #change files permissions
 sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
@@ -253,8 +253,8 @@ else
 set -e
 #Copy Certificates to Each Node
 sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
-sudo unzip /tmp/instances_http.zip -d /tmp/
-sudo cp -f /tmp/elasticsearch/http.p12 /etc/elasticsearch/certs/
+sudo unzip -o /tmp/instances_http.zip -d /tmp/
+sudo cp -f /tmp/elasticsearch/$HOSTNAME/http.p12 /etc/elasticsearch/certs/
 
 #change files permissions
 sudo chown -Rf root:elasticsearch /etc/elasticsearch/*
