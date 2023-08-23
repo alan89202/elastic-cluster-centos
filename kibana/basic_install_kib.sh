@@ -1,5 +1,8 @@
 #!/bin/bash
 
+ES_KEYSTORE_PASS=$1
+ES_CA_PASS=$2
+INSTANCES_CERT_PASS=$3
 # Ensure the script stops on the first error
 set -e
 
@@ -78,10 +81,7 @@ sudo sed -i \
 -e '/appenders:/,/type: json/ { s#fileName: /var/log/kibana/kibana.log#fileName: /app/logs/kibana/kibana.log#g }' \
 $FILE
 echo -e "\n# This configures Kibana to trust a specific Certificate Authority for connections to Elasticsearch\nelasticsearch.ssl.certificateAuthorities: [ \"/etc/kibana/config/elasticsearch-ca.pem\" ]" | sudo tee -a $FILE > /dev/null
-echo -e "\n \nserver.ssl.enabled: true\nserver.ssl.keystore.path: \"/etc/kibana/certs/http.p12\""
-
-
-
+echo -e "\n \nelasticsearch.ssl.verificationMode: certificate\nserver.ssl.enabled: true\nserver.ssl.keystore.path: \"/etc/kibana/certs/http.p12\""
 
 es_nodes="["
 for i in $(seq 0 $((count-1))); do
@@ -91,6 +91,9 @@ done
 es_nodes+="]"
 
 sudo sed -i 's|^#*elasticsearch\.hosts:.*$|elasticsearch.hosts: '"$es_nodes"'|' $FILE
+
+#Change keystore passwords
+echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/kibana-keystore add server.ssl.keystore.password --allow-root -xf
 
 #Create script to finish HTTP certificate configurations
 sudo cat > /tmp/http_cert_config.sh <<EOL
