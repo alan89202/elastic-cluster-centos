@@ -77,7 +77,11 @@ sudo sed -i \
 -e '/#*path\.data:/s/#*\([^:]*:\).*$/\1 \/app\/data1\/kibana/' \
 -e '/appenders:/,/type: json/ { s#fileName: /var/log/kibana/kibana.log#fileName: /app/logs/kibana/kibana.log#g }' \
 $FILE
-echo -e "\n# This configures Kibana to trust a specific Certificate Authority for connections to Elasticsearch\nelasticsearch.ssl.certificateAuthorities: [ \"config/elasticsearch-ca.pem\" ]" | sudo tee -a $FILE > /dev/null
+echo -e "\n# This configures Kibana to trust a specific Certificate Authority for connections to Elasticsearch\nelasticsearch.ssl.certificateAuthorities: [ \"/etc/kibana/config/elasticsearch-ca.pem\" ]" | sudo tee -a $FILE > /dev/null
+echo -e "\n \nserver.ssl.enabled: true\nserver.ssl.keystore.path: \"/etc/kibana/certs/http.p12\""
+
+
+
 
 es_nodes="["
 for i in $(seq 0 $((count-1))); do
