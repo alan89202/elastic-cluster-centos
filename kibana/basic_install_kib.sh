@@ -72,7 +72,8 @@ done
 #Replace arguments
 sudo sed -i \
 -e '/#*server\.port:/s/#*\([^:]*:\).*$/\1 5601/' \
--e '/#*server\.host:/s/#*\([^:]*:\).*$/\1 '"$myhostname"'/' \
+-e '/#*server\.host:/s/#*\([^:]*:\).*$/\1 '"$myhostname"'.escluster.internal/' \
+-e '/#*server\.name:/s/#*\([^:]*:\).*$/\1 '"$myhostname"'/' \
 -e '/#*path\.data:/s/#*\([^:]*:\).*$/\1 \/app\/data1\/kibana/' \
 -e '/appenders:/,/type: json/ { s#fileName: /var/log/kibana/kibana.log#fileName: /app/logs/kibana/kibana.log#g }' \
 $FILE
