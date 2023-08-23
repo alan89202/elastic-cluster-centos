@@ -283,8 +283,8 @@ resource "google_dns_record_set" "hot_node_dns" {
 
 # Warm DNS Records
 resource "google_dns_record_set" "warm_node_dns" {
-  count        = var.warm_count
-  name         = "warm-node-${count.index}.${var.dns_domain}"
+  
+  name         = "warm-node.${var.dns_domain}"
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
@@ -293,8 +293,8 @@ resource "google_dns_record_set" "warm_node_dns" {
 
 # kibana DNS Records
 resource "google_dns_record_set" "kibana_node_dns" {
-  count        = var.kibana_count
-  name         = "kibana-node-${count.index}.${var.dns_domain}"
+  
+  name         = "kibana-node.${var.dns_domain}"
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
