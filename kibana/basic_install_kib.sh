@@ -93,7 +93,7 @@ es_nodes+="]"
 sudo sed -i 's|^#*elasticsearch\.hosts:.*$|elasticsearch.hosts: '"$es_nodes"'|' $FILE
 
 #Change keystore passwords
-echo $INSTANCES_CERT_PASS | sudo /usr/share/elasticsearch/bin/kibana-keystore add server.ssl.keystore.password --allow-root -xf
+echo $INSTANCES_CERT_PASS | sudo /usr/share/kibana/bin/kibana-keystore add server.ssl.keystore.password -xf
 
 #Create script to finish HTTP certificate configurations
 sudo cat > /tmp/http_cert_config.sh <<EOL
