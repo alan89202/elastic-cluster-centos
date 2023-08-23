@@ -104,7 +104,8 @@ set -e
 
 #Copy Certificates to Each Node
 sudo gsutil cp gs://elk_config_files/instances_http.zip /tmp
-sudo unzip /tmp/instances_http.zip -d /tmp/
+sudo unzip -o /tmp/instances_http.zip -d /tmp/
+sudo cp -f /tmp/elasticsearch/$HOSTNAME/http.p12 /etc/kibana/config/
 sudo cp -f /tmp/kibana/elasticsearch-ca.pem /etc/kibana/config/
 
 #change files permissions
