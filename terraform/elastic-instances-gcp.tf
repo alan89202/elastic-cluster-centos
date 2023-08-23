@@ -288,7 +288,7 @@ resource "google_dns_record_set" "warm_node_dns" {
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
-  rrdatas      = [google_compute_instance.warm_node[count.index].network_interface.0.network_ip]
+  rrdatas      = [google_compute_instance.warm_node.network_interface.0.network_ip]
 }
 
 # kibana DNS Records
@@ -298,5 +298,5 @@ resource "google_dns_record_set" "kibana_node_dns" {
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.private_zone.name
-  rrdatas      = [google_compute_instance.kibana_node[count.index].network_interface.0.network_ip]
+  rrdatas      = [google_compute_instance.kibana_node.network_interface.0.network_ip]
 }
