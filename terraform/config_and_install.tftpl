@@ -20,7 +20,7 @@ if echo $HOSTNAME | grep -q 'kibana'; then
   # If 'kibana' is in the hostname, copy and execute basic_install_kib.sh
   gsutil cp gs://elk_config_files/basic_install_kib.sh /tmp/
   chmod +x /tmp/basic_install_kib.sh
-  /tmp/basic_install_kib.sh
+  /tmp/basic_install_kib.sh $ES_KEYSTORE_PASS $ES_CA_PASS $INSTANCES_CERT_PASS
   #echo "kibana"
 else
   # If 'kibana' is not in the hostname, copy and execute basic_install_es.sh
